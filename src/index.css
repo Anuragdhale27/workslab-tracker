@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  body { @apply bg-paper text-ink antialiased; }
+  ::selection { @apply bg-accent text-white; }
+  input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; }
+}
+.cell { @apply w-full h-9 px-2 bg-transparent text-sm focus:outline-none focus:bg-paper-2 border-0 text-right tabular-nums; }
+.cell-text { @apply text-left; }
