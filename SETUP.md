@@ -11,6 +11,7 @@ You need three things: a Firebase project (login + quota), a Google Cloud OAuth 
 3. Still in Authentication → **Settings → Authorized domains → Add domain**: `tracker.workslab.in`. (`localhost` is already there.)
 4. **Build → Firestore Database → Create database → Start in production mode** → location `asia-south1 (Mumbai)` → Enable.
 5. Firestore → **Rules** tab → replace everything with the contents of `firestore.rules` from this repo → **Publish**.
+   (The rules also allow a public `meta/stats` counter — this powers the "X of 100 free seats left" bar on the landing page. Signed-in users can only ever increment it by 1.)
 6. Project settings (gear icon) → **General → Your apps → Web (</>)** → nickname `tracker` → Register. Copy `apiKey`, `authDomain`, `projectId`, `appId` into `.env` (see `.env.example`).
 
 ## Part B — Google Cloud Console (Sheets & Drive API + OAuth Client ID)
@@ -48,16 +49,16 @@ Sign in with a test-user Gmail → create a Monthly tracker → check your Googl
 
 ## Part D — Deploy to GitHub Pages (tracker.workslab.in)
 
-1. Create repo `workslab-tracker` on GitHub. Push this folder (`.env` is git-ignored — good).
+1. Repo `workslab-tracker` on GitHub, default branch **main** (the workflow triggers on `main`). Push this folder (`.env` is git-ignored — good).
 2. Repo → **Settings → Secrets and variables → Actions → New repository secret** — add each of the 6 variables from `.env` (`VITE_FIREBASE_API_KEY`, … `VITE_RAZORPAY_LINK`).
 3. Repo → **Settings → Pages → Source: GitHub Actions**.
 4. Push to `main` → Actions tab builds and deploys. `public/CNAME` already contains `tracker.workslab.in`.
 5. **GoDaddy → workslab.in → DNS → Add record**: Type `CNAME`, Name `tracker`, Value `YOUR-GITHUB-USERNAME.github.io`, TTL 600.
 6. Repo → Settings → Pages → Custom domain `tracker.workslab.in` → Save → wait for the DNS check → tick **Enforce HTTPS**.
 
-## Part E — Razorpay (₹100 unlock)
+## Part E — Razorpay (early-bird ₹100 unlock)
 
-1. Razorpay dashboard → **Payment Links → Create** → amount ₹100, description "Works Lab Tracker — unlimited". Under advanced options set **Redirect URL** to `https://tracker.workslab.in/?paid=1`.
+1. Razorpay dashboard → **Payment Links → Create** → amount ₹100 (early bird; change to ₹299 later and update `REGULAR`/`EARLY_BIRD` in `src/config.js`), description "Works Lab Tracker — lifetime access". Under advanced options set **Redirect URL** to `https://tracker.workslab.in/?paid=1`.
 2. Paste the link into the `VITE_RAZORPAY_LINK` secret. Redeploy.
 
 > The `?paid=1` flag is client-side and not tamper-proof. It's fine for launch (the product is ₹100 and free tier is generous). When revenue justifies it, add a Firebase Cloud Function that receives the Razorpay webhook and sets `paid: true` server-side.
@@ -67,7 +68,8 @@ Sign in with a test-user Gmail → create a Monthly tracker → check your Googl
 ## How data flows
 
 ```
-Google login (Firebase) ─► uid ─► Firestore users/{uid}: { modules[], moduleCount, paid, spreadsheetId }
+Google login (Firebase) ─► uid ─► Firestore users/{uid}: { modules[], plan, userNumber, theme, spreadsheetId }
+                        └► first login: transaction on meta/stats.userCount → seat #; ≤100 = plan 'founder'
                                        │
 User clicks "Create tracker" ──────────┘──► Google token (GIS, drive.file scope)
                                             ──► Sheets API: find/create "Workslab Budget Ecosystem"
@@ -75,6 +77,9 @@ User clicks "Create tracker" ──────────┘──► Google t
 Every edit ─► localStorage (instant) ─► debounced 800ms ─► Sheets API writeTab
 Offline    ─► queued in localStorage ─► flushed on 'online' event
 ```
+
+## Business knobs
+All in `src/config.js`: `FOUNDER_SEATS` (100), `EARLY_BIRD` (₹100), `REGULAR` (₹299), `FREE_TRIAL_MODULES` (1), theme list and default theme.
 
 ## Add a new module type
 Edit `src/data/templates.js` → add a key to `MODULE_TYPES` with `kind: 'planner' | 'goals' | 'monthly'` and a `seed`. Done — the home grid, creation dialog, and Sheet schema all pick it up.

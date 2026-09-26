@@ -4,7 +4,8 @@ See **SETUP.md** for Firebase / Google Cloud / GitHub Pages configuration.
 
 ```
 src/
-  App.jsx                 auth, profile, module registry, paywall gate
+  config.js               pricing (100 free seats, ₹100 early bird, ₹299 regular), themes
+  App.jsx                 auth, profile, themes, module registry, quick-add, archive, paywall gate
   lib/firebase.js         Firebase Auth + Firestore profile (quota)
   lib/googleAuth.js       Google Identity Services token (drive.file + spreadsheets)
   lib/sheetsApi.js        create master sheet, add/delete tabs, read/write ranges
@@ -12,6 +13,6 @@ src/
   lib/storage.js          localStorage cache + offline write queue
   lib/csv.js              CSV export
   data/templates.js       module types, seed data, sheet <-> UI mapping
-  components/             Login, ModuleHome, ModuleShell, Grid, Charts, Paywall, useSheetSync
+  components/             Landing, Overview (home analysis), QuickAdd, ThemePicker, ModuleHome, ModuleShell, Grid, Charts, Paywall, useSheetSync
   modules/                MonthlyTracker, Planner (Wedding/Trip), Goals
 ```

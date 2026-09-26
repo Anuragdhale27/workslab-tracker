@@ -1,10 +1,10 @@
 import { cn } from '@/lib/utils'
 const variants = {
-  default: 'bg-ink text-white border-ink hover:bg-accent hover:border-accent',
-  outline: 'bg-transparent text-ink border-ink hover:bg-ink hover:text-white',
+  default: 'bg-ink text-paper border-ink hover:bg-accent hover:border-accent',
+  outline: 'bg-transparent text-ink border-ink hover:bg-ink hover:text-paper',
   ghost: 'border-transparent hover:bg-paper-2',
   danger: 'bg-transparent text-bad border-transparent hover:underline',
-  accent: 'bg-accent text-white border-accent hover:bg-ink hover:border-ink'
+  accent: 'bg-accent text-paper border-accent hover:bg-ink hover:border-ink'
 }
 const sizes = { default: 'h-11 px-5 text-sm', sm: 'h-9 px-3 text-xs', lg: 'h-12 px-7 text-base', icon: 'h-9 w-9' }
 export function Button({ className, variant = 'default', size = 'default', ...p }) {

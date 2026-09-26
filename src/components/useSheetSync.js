@@ -16,7 +16,7 @@ export function useSheetSync({ mod, kind, spreadsheetId, seed, setErr }) {
     ;(async () => {
       if (!spreadsheetId || !navigator.onLine) { setStatus(navigator.onLine ? '' : 'offline'); return }
       try {
-        const rows = await readRange(spreadsheetId, `${mod.tab}!A1:D1000`)
+        const rows = await readRange(spreadsheetId, `${mod.tab}!A1:F2000`)
         if (live && rows.length > 1) { const d = fromRows(kind, rows); setData(d); cacheSet(key, d) }
         if (live) setStatus('saved')
       } catch (e) { if (live) { setStatus(''); setErr?.('Could not read sheet: ' + e.message) } }
