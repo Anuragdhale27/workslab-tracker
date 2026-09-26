@@ -25,7 +25,7 @@ export async function ensureMaster(knownId) {
   if (found.files?.length) return found.files[0].id
   const created = await call(SHEETS, {
     method: 'POST',
-    body: JSON.stringify({ properties: { title: MASTER_TITLE, locale: 'en_IN' }, sheets: [{ properties: { title: 'Welcome' } }] })
+    body: JSON.stringify({ properties: { title: MASTER_TITLE, locale: 'en_GB' }, sheets: [{ properties: { title: 'Welcome' } }] })
   })
   await writeRange(created.spreadsheetId, 'Welcome!A1', [
     ['Workslab Budget Ecosystem'], ['This file is managed by tracker.workslab.in'], ['Each tab is one tracker module. Edit here or in the app — both stay in sync.']
