@@ -30,19 +30,23 @@ jobs:
         run: |
           if [ -f package-lock.json ]; then npm ci; else npm install; fi
 
-      # Firebase keys come from repo secrets:
-      # Settings -> Secrets and variables -> Actions -> New repository secret.
-      # Names must match the variable names in your local .env file.
+      # Recreates your local .env from ONE repo secret named ENV_FILE.
+      # Settings -> Secrets and variables -> Actions -> New repository secret
+      # Name: ENV_FILE   Value: paste the full contents of your local .env
+      - name: Create .env
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
+        run: |
+          if [ -z "$ENV_FILE" ]; then
+            echo "::error::ENV_FILE secret is missing. Add it in Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+          printf '%s\n' "$ENV_FILE" > .env
+          echo "Variables found in .env:"
+          grep -oE '^[A-Za-z_][A-Za-z0-9_]*' .env
+
       - name: Build
         run: npm run build
-        env:
-          VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
-          VITE_FIREBASE_AUTH_DOMAIN: ${{ secrets.VITE_FIREBASE_AUTH_DOMAIN }}
-          VITE_FIREBASE_PROJECT_ID: ${{ secrets.VITE_FIREBASE_PROJECT_ID }}
-          VITE_FIREBASE_STORAGE_BUCKET: ${{ secrets.VITE_FIREBASE_STORAGE_BUCKET }}
-          VITE_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}
-          VITE_FIREBASE_APP_ID: ${{ secrets.VITE_FIREBASE_APP_ID }}
-          VITE_FIREBASE_MEASUREMENT_ID: ${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}
 
       # Lets page refreshes on routes like /settings work (for React Router apps)
       - name: SPA fallback
