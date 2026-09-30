@@ -1,7 +1,7 @@
 // ===== BUSINESS CONFIG — edit here =====
 export const PRICING = {
-  FOUNDER_SEATS: 99,        // first N sign-ups get lifetime free access
-  EARLY_BIRD: 100,           // ₹ early-bird price after seats run out
+  FOUNDER_SEATS: 100,        // first N sign-ups get lifetime free access
+  EARLY_BIRD: 99,           // ₹ early-bird price after seats run out
   REGULAR: 299,              // ₹ regular price (shown struck-through)
   FREE_TRIAL_MODULES: 1      // non-paying users beyond the 100 can still try this many trackers
 }
